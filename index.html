@@ -13,17 +13,19 @@
             padding: 0;
         }
 
-        /* Barra de Navegação com logo à esquerda e links centralizados */
+        /* Barra de Navegação */
         .navbar {
             background-color: #0b0b0b;
             border-bottom: 1px solid #1f1f1f;
             padding: 15px 20px;
+            position: relative;
+            z-index: 1000;
         }
 
         .nav-container {
             display: flex;
             align-items: center;
-            justify-content: center; /* Centraliza os links no meio */
+            justify-content: center; /* Desktop: centraliza os links */
             max-width: 1200px;
             margin: 0 auto;
             position: relative;
@@ -31,7 +33,7 @@
 
         .logo-link {
             position: absolute;
-            left: 0; /* Fixa a logo na extremidade esquerda */
+            left: 0; /* Desktop: logo na esquerda */
             display: flex;
             align-items: center;
         }
@@ -58,6 +60,30 @@
 
         .nav-links a:hover, .nav-links a.active {
             color: #ffffff;
+        }
+
+        /* Botão Hamburger (Escondido no Desktop) */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 24px;
+            height: 16px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            position: absolute;
+            right: 0; /* Fica na extrema direita no mobile */
+            z-index: 1001;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: #ffffff;
+            transition: all 0.3s ease;
         }
 
         /* Conteúdo Principal da Home */
@@ -92,23 +118,70 @@
         .btn-youtube:hover {
             background-color: #cc0000;
         }
+
+        /* --- RESPONSIVIDADE PARA CELULAR (Mobile) --- */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex; /* Mostra os dois tracinhos no mobile */
+            }
+
+            /* Transforma os links em um menu overlay de tela cheia */
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: #0b0b0b;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 25px;
+                font-size: 1.5rem;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+            }
+
+            /* Estado ativo do menu (aberto) */
+            .nav-links.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            /* Animação do botão para virar um "X" ao abrir */
+            .menu-toggle.active span:nth-child(1) {
+                transform: translateY(7px) rotate(45deg);
+            }
+            .menu-toggle.active span:nth-child(2) {
+                transform: translateY(-7px) rotate(-45deg);
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Barra de Navegação com links centralizados -->
+    <!-- Barra de Navegação Responsiva -->
     <header class="navbar">
         <nav class="nav-container">
             <a href="index.html" class="logo-link">
                 <img src="img/XSB.jpg" alt="XSB GAMES Logo" class="nav-logo">
             </a>
-            <ul class="nav-links">
+
+            <!-- Links de navegação -->
+            <ul class="nav-links" id="navLinks">
                 <li><a href="games/">Games</a></li>
                 <li><a href="#noticias">Notícias</a></li>
                 <li><a href="#comunidade">Comunidade</a></li>
                 <li><a href="#redes">Redes Sociais</a></li>
                 <li><a href="#sobre">Sobre</a></li>
             </ul>
+
+            <!-- Botão de tracinhos (Hamburger) visível apenas no mobile -->
+            <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+                <span></span>
+                <span></span>
+            </button>
         </nav>
     </header>
 
@@ -118,5 +191,23 @@
         <a href="https://youtube.com" target="_blank" class="btn-youtube">Canal do Youtube</a>
     </div>
 
+    <!-- Script JS para controlar a abertura/fechamento do menu mobile -->
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Fecha o menu automaticamente ao clicar em qualquer link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+    </script>
 </body>
 </html>
