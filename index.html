@@ -4,19 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XSB GAMES</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Barra de Navegação com logo à esquerda e links centralizados */
+        .navbar {
+            background-color: #0b0b0b;
+            border-bottom: 1px solid #1f1f1f;
+            padding: 15px 20px;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centraliza os links no meio */
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .logo-link {
+            position: absolute;
+            left: 0; /* Fixa a logo na extremidade esquerda */
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-logo {
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #ffffff;
+        }
+
+        /* Conteúdo Principal da Home */
+        .hero {
+            text-align: center;
+            padding: 120px 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        p {
+            color: #737373;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .btn-youtube {
+            display: inline-block;
+            background-color: #ff0000;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-youtube:hover {
+            background-color: #cc0000;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Barra de Navegação estilo Apple em cinza escuro -->
+    <!-- Barra de Navegação com links centralizados -->
     <header class="navbar">
         <nav class="nav-container">
-            <a href="#" class="logo-link">
-                <!-- Imagem do samurai atualizada corretamente -->
+            <a href="index.html" class="logo-link">
                 <img src="img/XSB.jpg" alt="XSB GAMES Logo" class="nav-logo">
             </a>
             <ul class="nav-links">
-                <li><a href="games/">Games</a></li> 
+                <li><a href="games/">Games</a></li>
                 <li><a href="#noticias">Notícias</a></li>
                 <li><a href="#comunidade">Comunidade</a></li>
                 <li><a href="#redes">Redes Sociais</a></li>
@@ -25,17 +112,11 @@
         </nav>
     </header>
 
-    <!-- Conteúdo Principal em fundo preto -->
-    <main class="hero-section">
-        <h1 class="site-title">XSB GAMES</h1>
-        <p class="status-text">Em construção</p>
-        
-        <!-- Botão do YouTube -->
-        <a href="https://www.youtube.com/@xsamurayblack" target="_blank" rel="noopener noreferrer" class="youtube-btn">
-            Canal do Youtube
-        </a>
-    </main>
+    <div class="hero">
+        <h1>XSB GAMES</h1>
+        <p>Em construção</p>
+        <a href="https://youtube.com" target="_blank" class="btn-youtube">Canal do Youtube</a>
+    </div>
 
-    <script src="script.js"></script>
 </body>
 </html>
