@@ -3,231 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XSB Games - Retro Pong</title>
-    <!-- Puxando o estilo global da raiz usando o ../ -->
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Games - XSB GAMES</title>
     <style>
-        /* Estilos específicos para centralizar o arcade na tela */
+        /* Estilo idêntico ao da página inicial */
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: #000000;
+            color: #ffffff;
             font-family: monospace;
+            margin: 0;
+            padding: 0;
         }
-        .voltar {
-            margin-bottom: 15px;
-            color: #38bdf8;
+        header {
+            background-color: #0b0b0b;
+            border-bottom: 1px solid #1f1f1f;
+            padding: 15px 0;
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links a {
+            color: #94a3b8;
             text-decoration: none;
-            font-weight: bold;
+            transition: color 0.2s;
         }
-        .voltar:hover {
-            text-decoration: underline;
+        .nav-links a:hover, .nav-links a.active {
+            color: #ffffff;
+        }
+        /* Conteúdo do Catálogo */
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
         }
         h1 {
-            margin-bottom: 10px;
-            font-size: 1.8rem;
-            letter-spacing: 2px;
+            font-size: 2rem;
+            margin-bottom: 25px;
+            color: #ffffff;
+            border-bottom: 2px solid #1f1f1f;
+            padding-bottom: 10px;
         }
-        canvas {
-            border: 4px solid #38bdf8;
-            background-color: #020617;
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
         }
-        .instrucoes {
-            margin-top: 15px;
+        .game-card {
+            background: #0b0b0b;
+            border: 2px solid #1f1f1f;
+            border-radius: 8px;
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .game-card:hover {
+            border-color: #ffffff;
+            transform: translateY(-4px);
+        }
+        .game-card h3 {
+            margin-top: 0;
+            color: #ffffff;
+            font-size: 1.2rem;
+        }
+        .game-card p {
             color: #94a3b8;
             font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .btn-jogar {
+            display: inline-block;
+            margin-top: 15px;
+            background: #ffffff;
+            color: #000000;
+            padding: 8px 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .btn-jogar:hover {
+            background: #cbd5e1;
         }
     </style>
 </head>
 <body>
 
-    <a class="voltar" href="../index.html">← Voltar para a Página Principal</a>
-    <h1>XSB RETRO PONG</h1>
-    
-    <!-- Tela onde o jogo vai rodar -->
-    <canvas id="pongCanvas" width="600" height="400"></canvas>
-    
-    <div class="instrucoes">
-        Use as teclas <b>W</b> e <b>S</b> (ou as Setas <b>↑</b> e <b>↓</b>) para mover a raquete.
+    <header>
+        <div class="nav-container">
+            <a href="../index.html">
+                <img src="../img/XSB.jpg" alt="Logo" style="height: 40px; border-radius: 50%;">
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="index.html" class="active">Games</a></li>
+                <li><a href="../noticias/">Notícias</a></li>
+                <li><a href="../index.html#comunidade">Comunidade</a></li>
+                <li><a href="../index.html#redes">Redes Sociais</a></li>
+                <li><a href="../index.html#sobre">Sobre</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Arcade & Jogos</h1>
+        <div class="game-grid">
+            <a href="pong.html" class="game-card">
+                <div>
+                    <h3>XSB Retro Pong</h3>
+                    <p>O clássico jogo de tênis de mesa em estilo retrô. Teste seus reflexos contra a inteligência artificial!</p>
+                </div>
+                <span class="btn-jogar">Jogar Agora →</span>
+            </a>
+        </div>
     </div>
 
-    <script>
-        const canvas = document.getElementById("pongCanvas");
-        const ctx = canvas.getContext("2d");
-
-        // Objeto Bola
-        let ball = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            radius: 10,
-            speed: 5,
-            velocityX: 5,
-            velocityY: 5
-        };
-
-        // Raquete do Jogador (Esquerda)
-        let player = {
-            x: 10,
-            y: canvas.height / 2 - 40,
-            width: 12,
-            height: 80,
-            score: 0,
-            color: "#38bdf8"
-        };
-
-        // Raquete do Oponente / IA (Direita)
-        let ai = {
-            x: canvas.width - 22,
-            y: canvas.height / 2 - 40,
-            width: 12,
-            height: 80,
-            score: 0,
-            color: "#f43f5e"
-        };
-
-        // Capturar comandos do teclado
-        let keys = {};
-        window.addEventListener("keydown", (e) => keys[e.key] = true);
-        window.addEventListener("keyup", (e) => keys[e.key] = false);
-
-        function movePlayer() {
-            if ((keys["ArrowUp"] || keys["w"] || keys["W"]) && player.y > 0) {
-                player.y -= 7;
-            }
-            if ((keys["ArrowDown"] || keys["s"] || keys["S"]) && player.y < canvas.height - player.height) {
-                player.y += 7;
-            }
-        }
-
-        function moveAI() {
-            // IA simples seguindo a posição da bola com velocidade limitada
-            let aiCenter = ai.y + ai.height / 2;
-            if (aiCenter < ball.y - 35) {
-                ai.y += 4.5;
-            } else if (aiCenter > ball.y + 35) {
-                ai.y -= 4.5;
-            }
-            // Manter a IA dentro da tela
-            if (ai.y < 0) ai.y = 0;
-            if (ai.y > canvas.height - ai.height) ai.y = canvas.height - ai.height;
-        }
-
-        function collision(b, p) {
-            let bTop = b.y - b.radius;
-            let bBottom = b.y + b.radius;
-            let bLeft = b.x - b.radius;
-            let bRight = b.x + b.radius;
-
-            let pTop = p.y;
-            let pBottom = p.y + p.height;
-            let pLeft = p.x;
-            let pRight = p.x + p.width;
-
-            return bRight > pLeft && bBottom > pTop && bLeft < pRight && bTop < pBottom;
-        }
-
-        function resetBall() {
-            ball.x = canvas.width / 2;
-            ball.y = canvas.height / 2;
-            ball.velocityX = -ball.velocityX;
-            ball.speed = 5;
-        }
-
-        function update() {
-            movePlayer();
-            moveAI();
-
-            // Movimentação da bola
-            ball.x += ball.velocityX;
-            ball.y += ball.velocityY;
-
-            // Rebater nas paredes superior e inferior
-            if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
-                ball.velocityY = -ball.velocityY;
-            }
-
-            // Verificar colisão com as raquetes
-            let activePaddle = (ball.x < canvas.width / 2) ? player : ai;
-
-            if (collision(ball, activePaddle)) {
-                // Calcular ângulo de rebatida baseado em onde a bola bateu na raquete
-                let collidePoint = ball.y - (activePaddle.y + activePaddle.height / 2);
-                collidePoint = collidePoint / (activePaddle.height / 2);
-                
-                let angleRad = (Math.PI / 4) * collidePoint;
-                let direction = (ball.x < canvas.width / 2) ? 1 : -1;
-
-                ball.velocityX = direction * ball.speed * Math.cos(angleRad);
-                ball.velocityY = ball.speed * Math.sin(angleRad);
-
-                // Aumentar levemente a velocidade a cada toque
-                ball.speed += 0.3;
-            }
-
-            // Sistema de Pontuação
-            if (ball.x - ball.radius < 0) {
-                ai.score++;
-                resetBall();
-            } else if (ball.x + ball.radius > canvas.width) {
-                player.score++;
-                resetBall();
-            }
-        }
-
-        // Funções de desenho no Canvas
-        function drawRect(x, y, w, h, color) {
-            ctx.fillStyle = color;
-            ctx.fillRect(x, y, w, h);
-        }
-
-        function drawCircle(x, y, r, color) {
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2, false);
-            ctx.closePath();
-            ctx.fill();
-        }
-
-        function drawText(text, x, y, color) {
-            ctx.fillStyle = color;
-            ctx.font = "40px monospace";
-            ctx.fillText(text, x, y);
-        }
-
-        function drawNet() {
-            for (let i = 0; i <= canvas.height; i += 15) {
-                drawRect(canvas.width / 2 - 1, i, 2, 10, "#334155");
-            }
-        }
-
-        function render() {
-            // Limpar fundo do canvas
-            drawRect(0, 0, canvas.width, canvas.height, "#020617");
-
-            // Desenhar elementos
-            drawNet();
-            drawText(player.score, canvas.width / 4, canvas.height / 5, "#38bdf8");
-            drawText(ai.score, 3 * canvas.width / 4, canvas.height / 5, "#f43f5e");
-            
-            drawRect(player.x, player.y, player.width, player.height, player.color);
-            drawRect(ai.x, ai.y, ai.width, ai.height, ai.color);
-            drawCircle(ball.x, ball.y, ball.radius, "#f8fafc");
-        }
-
-        function gameLoop() {
-            update();
-            render();
-        }
-
-        // Rodar o loop do jogo a 60 FPS
-        const FPS = 60;
-        setInterval(gameLoop, 1000 / FPS);
-    </script>
 </body>
 </html>

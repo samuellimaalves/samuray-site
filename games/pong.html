@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSB Games - Retro Pong</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #000000;
+            color: #ffffff;
+            font-family: monospace;
+        }
+        .voltar {
+            margin-bottom: 8px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .voltar:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+        h1 {
+            margin: 0 0 5px 0;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: #ffffff;
+        }
+        .info-painel {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            color: #94a3b8;
+        }
+        .info-painel span {
+            color: #ffffff;
+            font-weight: bold;
+        }
+        canvas {
+            border: 2px solid #333333;
+            background-color: #0b0b0b;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+        }
+        .controles-jogo {
+            margin-top: 12px;
+            display: flex;
+            gap: 15px;
+        }
+        button {
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 8px 18px;
+            font-weight: bold;
+            font-family: monospace;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #cbd5e1;
+        }
+        .instrucoes {
+            margin-top: 10px;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <a class="voltar" href="index.html">← Voltar para o Catálogo de Games</a>
+    <h1>XSB RETRO PONG</h1>
+    
+    <div class="info-painel">
+        <div>Recorde: <span id="highScore">0</span></div>
+        <div>Status: <span id="gameStatus" style="color: #f43f5e;">Pausado</span></div>
+    </div>
+
+    <canvas id="pongCanvas" width="600" height="400"></canvas>
+    
+    <div class="controles-jogo">
+        <button onclick="togglePause()">▶ / ⏸ Iniciar / Pausar</button>
+    </div>
+
+    <div class="instrucoes">
+        Use as teclas <b>W</b> e <b>S</b> (ou as Setas <b>↑</b> e <b>↓</b>) para mover a raquete.
+    </div>
+
+    <script>
+        const canvas = document.getElementById("pongCanvas");
+        const ctx = canvas.getContext("2d");
+        const highScoreEl = document.getElementById("highScore");
+        const gameStatusEl = document.getElementById("gameStatus");
+
+        let isPlaying = false;
+        
+        let highScore = localStorage.getItem("pongHighScore") || 0;
+        highScoreEl.innerText = highScore;
+
+        let ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 10,
+            speed: 5,
+            velocityX: 5,
+            velocityY: 5
+        };
+
+        let player = {
+            x: 10,
+            y: canvas.height / 2 - 40,
+            width: 12,
+            height: 80,
+            score: 0,
+            color: "#ffffff"
+        };
+
+        let ai = {
+            x: canvas.width - 22,
+            y: canvas.height / 2 - 40,
+            width: 12,
+            height: 80,
+            score: 0,
+            color: "#94a3b8"
+        };
+
+        let keys = {};
+        window.addEventListener("keydown", (e) => keys[e.key] = true);
+        window.addEventListener("keyup", (e) => keys[e.key] = false);
+
+        function togglePause() {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                gameStatusEl.innerText = "Jogando";
+                gameStatusEl.style.color = "#22c55e";
+            } else {
+                gameStatusEl.innerText = "Pausado";
+                gameStatusEl.style.color = "#f43f5e";
+            }
+        }
+
+        function atualizarHighScore() {
+            if (player.score > highScore) {
+                highScore = player.score;
+                localStorage.setItem("pongHighScore", highScore);
+                highScoreEl.innerText = highScore;
+            }
+        }
+
+        function movePlayer() {
+            if (!isPlaying) return;
+            if ((keys["ArrowUp"] || keys["w"] || keys["W"]) && player.y > 0) {
+                player.y -= 7;
+            }
+            if ((keys["ArrowDown"] || keys["s"] || keys["S"]) && player.y < canvas.height - player.height) {
+                player.y += 7;
+            }
+        }
+
+        function moveAI() {
+            if (!isPlaying) return;
+            let aiCenter = ai.y + ai.height / 2;
+            if (aiCenter < ball.y - 35) {
+                ai.y += 4.5;
+            } else if (aiCenter > ball.y + 35) {
+                ai.y -= 4.5;
+            }
+            if (ai.y < 0) ai.y = 0;
+            if (ai.y > canvas.height - ai.height) ai.y = canvas.height - ai.height;
+        }
+
+        function collision(b, p) {
+            let bTop = b.y - b.radius;
+            let bBottom = b.y + b.radius;
+            let bLeft = b.x - b.radius;
+            let bRight = b.x + b.radius;
+
+            let pTop = p.y;
+            let pBottom = p.y + p.height;
+            let pLeft = p.x;
+            let pRight = p.x + p.width;
+
+            return bRight > pLeft && bBottom > pTop && bLeft < pRight && bTop < pBottom;
+        }
+
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.velocityX = -ball.velocityX;
+            ball.speed = 5;
+        }
+
+        function update() {
+            if (!isPlaying) return;
+            movePlayer();
+            moveAI();
+
+            ball.x += ball.velocityX;
+            ball.y += ball.velocityY;
+
+            if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+                ball.velocityY = -ball.velocityY;
+            }
+
+            let activePaddle = (ball.x < canvas.width / 2) ? player : ai;
+
+            if (collision(ball, activePaddle)) {
+                let collidePoint = ball.y - (activePaddle.y + activePaddle.height / 2);
+                collidePoint = collidePoint / (activePaddle.height / 2);
+                
+                let angleRad = (Math.PI / 4) * collidePoint;
+                let direction = (ball.x < canvas.width / 2) ? 1 : -1;
+
+                ball.velocityX = direction * ball.speed * Math.cos(angleRad);
+                ball.velocityY = ball.speed * Math.sin(angleRad);
+
+                ball.speed += 0.3;
+            }
+
+            if (ball.x - ball.radius < 0) {
+                ai.score++;
+                resetBall();
+            } else if (ball.x + ball.radius > canvas.width) {
+                player.score++;
+                atualizarHighScore();
+                resetBall();
+            }
+        }
+
+        function drawRect(x, y, w, h, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, w, h);
+        }
+
+        function drawCircle(x, y, r, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2, false);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawText(text, x, y, color) {
+            ctx.fillStyle = color;
+            ctx.font = "40px monospace";
+            ctx.fillText(text, x, y);
+        }
+
+        function drawNet() {
+            for (let i = 0; i <= canvas.height; i += 15) {
+                drawRect(canvas.width / 2 - 1, i, 2, 10, "#222222");
+            }
+        }
+
+        function render() {
+            drawRect(0, 0, canvas.width, canvas.height, "#0b0b0b");
+            drawNet();
+            drawText(player.score, canvas.width / 4, canvas.height / 5, "#ffffff");
+            drawText(ai.score, 3 * canvas.width / 4, canvas.height / 5, "#94a3b8");
+            
+            drawRect(player.x, player.y, player.width, player.height, player.color);
+            drawRect(ai.x, ai.y, ai.width, ai.height, ai.color);
+            drawCircle(ball.x, ball.y, ball.radius, "#ffffff");
+        }
+
+        function gameLoop() {
+            update();
+            render();
+        }
+
+        render();
+        setInterval(gameLoop, 1000 / 60);
+    </script>
+</body>
+</html>
