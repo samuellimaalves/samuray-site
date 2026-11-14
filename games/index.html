@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSB Games - Retro Pong</title>
+    <!-- Puxando o estilo global da raiz usando o ../ -->
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* Estilos específicos para centralizar o arcade na tela */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: monospace;
+        }
+        .voltar {
+            margin-bottom: 15px;
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .voltar:hover {
+            text-decoration: underline;
+        }
+        h1 {
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+        }
+        canvas {
+            border: 4px solid #38bdf8;
+            background-color: #020617;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
+        }
+        .instrucoes {
+            margin-top: 15px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <a class="voltar" href="../index.html">← Voltar para a Página Principal</a>
+    <h1>XSB RETRO PONG</h1>
+    
+    <!-- Tela onde o jogo vai rodar -->
+    <canvas id="pongCanvas" width="600" height="400"></canvas>
+    
+    <div class="instrucoes">
+        Use as teclas <b>W</b> e <b>S</b> (ou as Setas <b>↑</b> e <b>↓</b>) para mover a raquete.
+    </div>
+
+    <script>
+        const canvas = document.getElementById("pongCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Objeto Bola
+        let ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 10,
+            speed: 5,
+            velocityX: 5,
+            velocityY: 5
+        };
+
+        // Raquete do Jogador (Esquerda)
+        let player = {
+            x: 10,
+            y: canvas.height / 2 - 40,
+            width: 12,
+            height: 80,
+            score: 0,
+            color: "#38bdf8"
+        };
+
+        // Raquete do Oponente / IA (Direita)
+        let ai = {
+            x: canvas.width - 22,
+            y: canvas.height / 2 - 40,
+            width: 12,
+            height: 80,
+            score: 0,
+            color: "#f43f5e"
+        };
+
+        // Capturar comandos do teclado
+        let keys = {};
+        window.addEventListener("keydown", (e) => keys[e.key] = true);
+        window.addEventListener("keyup", (e) => keys[e.key] = false);
+
+        function movePlayer() {
+            if ((keys["ArrowUp"] || keys["w"] || keys["W"]) && player.y > 0) {
+                player.y -= 7;
+            }
+            if ((keys["ArrowDown"] || keys["s"] || keys["S"]) && player.y < canvas.height - player.height) {
+                player.y += 7;
+            }
+        }
+
+        function moveAI() {
+            // IA simples seguindo a posição da bola com velocidade limitada
+            let aiCenter = ai.y + ai.height / 2;
+            if (aiCenter < ball.y - 35) {
+                ai.y += 4.5;
+            } else if (aiCenter > ball.y + 35) {
+                ai.y -= 4.5;
+            }
+            // Manter a IA dentro da tela
+            if (ai.y < 0) ai.y = 0;
+            if (ai.y > canvas.height - ai.height) ai.y = canvas.height - ai.height;
+        }
+
+        function collision(b, p) {
+            let bTop = b.y - b.radius;
+            let bBottom = b.y + b.radius;
+            let bLeft = b.x - b.radius;
+            let bRight = b.x + b.radius;
+
+            let pTop = p.y;
+            let pBottom = p.y + p.height;
+            let pLeft = p.x;
+            let pRight = p.x + p.width;
+
+            return bRight > pLeft && bBottom > pTop && bLeft < pRight && bTop < pBottom;
+        }
+
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.velocityX = -ball.velocityX;
+            ball.speed = 5;
+        }
+
+        function update() {
+            movePlayer();
+            moveAI();
+
+            // Movimentação da bola
+            ball.x += ball.velocityX;
+            ball.y += ball.velocityY;
+
+            // Rebater nas paredes superior e inferior
+            if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+                ball.velocityY = -ball.velocityY;
+            }
+
+            // Verificar colisão com as raquetes
+            let activePaddle = (ball.x < canvas.width / 2) ? player : ai;
+
+            if (collision(ball, activePaddle)) {
+                // Calcular ângulo de rebatida baseado em onde a bola bateu na raquete
+                let collidePoint = ball.y - (activePaddle.y + activePaddle.height / 2);
+                collidePoint = collidePoint / (activePaddle.height / 2);
+                
+                let angleRad = (Math.PI / 4) * collidePoint;
+                let direction = (ball.x < canvas.width / 2) ? 1 : -1;
+
+                ball.velocityX = direction * ball.speed * Math.cos(angleRad);
+                ball.velocityY = ball.speed * Math.sin(angleRad);
+
+                // Aumentar levemente a velocidade a cada toque
+                ball.speed += 0.3;
+            }
+
+            // Sistema de Pontuação
+            if (ball.x - ball.radius < 0) {
+                ai.score++;
+                resetBall();
+            } else if (ball.x + ball.radius > canvas.width) {
+                player.score++;
+                resetBall();
+            }
+        }
+
+        // Funções de desenho no Canvas
+        function drawRect(x, y, w, h, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, w, h);
+        }
+
+        function drawCircle(x, y, r, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2, false);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawText(text, x, y, color) {
+            ctx.fillStyle = color;
+            ctx.font = "40px monospace";
+            ctx.fillText(text, x, y);
+        }
+
+        function drawNet() {
+            for (let i = 0; i <= canvas.height; i += 15) {
+                drawRect(canvas.width / 2 - 1, i, 2, 10, "#334155");
+            }
+        }
+
+        function render() {
+            // Limpar fundo do canvas
+            drawRect(0, 0, canvas.width, canvas.height, "#020617");
+
+            // Desenhar elementos
+            drawNet();
+            drawText(player.score, canvas.width / 4, canvas.height / 5, "#38bdf8");
+            drawText(ai.score, 3 * canvas.width / 4, canvas.height / 5, "#f43f5e");
+            
+            drawRect(player.x, player.y, player.width, player.height, player.color);
+            drawRect(ai.x, ai.y, ai.width, ai.height, ai.color);
+            drawCircle(ball.x, ball.y, ball.radius, "#f8fafc");
+        }
+
+        function gameLoop() {
+            update();
+            render();
+        }
+
+        // Rodar o loop do jogo a 60 FPS
+        const FPS = 60;
+        setInterval(gameLoop, 1000 / FPS);
+    </script>
+</body>
+</html>
