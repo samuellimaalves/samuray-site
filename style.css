@@ -10,7 +10,7 @@ body {
 .navbar {
     background-color: #0b0b0b;
     border-bottom: 1px solid #1f1f1f;
-    padding: 10px 20px; /* Reduzimos o padding vertical para a barra ficar mais proporcional */
+    padding: 12px 20px;
     position: relative;
     z-index: 1000;
 }
@@ -26,16 +26,17 @@ body {
 
 .logo-link {
     position: absolute;
-    left: 0;
+    left: 20px; /* Mantém um respiro seguro da borda esquerda */
     top: 50%;
-    transform: translateY(-50%); /* Centraliza perfeitamente na vertical */
+    transform: translateY(-50%);
     display: flex;
     align-items: center;
+    height: 32px; /* Define uma altura fixa para o link */
 }
 
 .nav-logo {
-    height: 28px; /* Diminuímos para caber confortavelmente */
-    width: 28px;
+    height: 32px; /* Reduzido para caber perfeitamente na barra */
+    width: 32px;
     object-fit: cover;
     border-radius: 50%;
 }
