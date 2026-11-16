@@ -10,7 +10,7 @@ body {
 .navbar {
     background-color: #0b0b0b;
     border-bottom: 1px solid #1f1f1f;
-    padding: 12px 20px;
+    padding: 16px 20px; /* Aumenta a espessura (altura) da barra */
     position: relative;
     z-index: 1000;
 }
@@ -26,17 +26,16 @@ body {
 
 .logo-link {
     position: absolute;
-    left: 20px; /* Mantém um respiro seguro da borda esquerda */
+    left: 20px;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
     align-items: center;
-    height: 32px; /* Define uma altura fixa para o link */
 }
 
 .nav-logo {
-    height: 32px; /* Reduzido para caber perfeitamente na barra */
-    width: 32px;
+    height: 24px; /* Diminui a imagem do samurai para caber com folga */
+    width: 24px;
     object-fit: cover;
     border-radius: 50%;
 }
