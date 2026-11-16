@@ -10,7 +10,7 @@ body {
 .navbar {
     background-color: #0b0b0b;
     border-bottom: 1px solid #1f1f1f;
-    padding: 36px 20px; /* Aumentado novamente em 1.5x (de 24px para 36px) */
+    padding: 30px 20px; /* Ajuste fino para deixar levemente menor que 36px */
     position: relative;
     z-index: 1000;
 }
