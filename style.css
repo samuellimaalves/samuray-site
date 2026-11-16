@@ -1,110 +1,153 @@
-/* Reset global e cores principais */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-
 body {
     background-color: #000000;
     color: #ffffff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
-/* Barra superior cinza escura */
+/* Barra de Navegação */
 .navbar {
-    background-color: #1d1d1f;
-    width: 100%;
-    height: 48px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-bottom: 1px solid #333336;
-    position: sticky;
-    top: 0;
+    background-color: #0b0b0b;
+    border-bottom: 1px solid #1f1f1f;
+    padding: 15px 20px;
+    position: relative;
     z-index: 1000;
 }
 
 .nav-container {
-    width: 100%;
-    max-width: 980px;
-    padding: 0 22px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center; /* Desktop: centraliza os links */
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
 }
 
 .logo-link {
+    position: absolute;
+    left: 0; /* Desktop: logo na esquerda */
     display: flex;
     align-items: center;
 }
 
 .nav-logo {
-    height: 30px;
-    width: 30px;
-    object-fit: cover;
+    height: 40px;
     border-radius: 50%;
 }
 
 .nav-links {
-    list-style: none;
     display: flex;
-    gap: 36px;
-    margin: 0 auto;
+    list-style: none;
+    gap: 25px;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-links a {
-    color: #d2d2d7;
+    color: #94a3b8;
     text-decoration: none;
-    font-size: 13px;
-    font-weight: 400;
-    transition: color 0.2s ease;
+    transition: color 0.2s;
+    font-size: 0.95rem;
 }
 
-.nav-links a:hover {
+.nav-links a:hover, 
+.nav-links a.active {
     color: #ffffff;
 }
 
-/* Conteúdo principal centralizado */
-.hero-section {
-    flex: 1;
-    display: flex;
+/* Botão Hamburger (Escondido no Desktop) */
+.menu-toggle {
+    display: none;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-between;
+    width: 24px;
+    height: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    position: absolute;
+    right: 0; /* Fica na extrema direita no mobile */
+    z-index: 1001;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+/* Conteúdo Principal da Home */
+.hero {
     text-align: center;
-    padding: 40px 20px;
+    padding: 120px 20px;
 }
 
-.site-title {
-    font-size: 48px;
-    font-weight: 700;
-    margin-bottom: 12px;
+h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+p {
+    color: #737373;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.btn-youtube {
+    display: inline-block;
+    background-color: #ff0000;
     color: #ffffff;
-}
-
-.status-text {
-    font-size: 22px;
-    color: #86868b;
-    margin-bottom: 28px;
-}
-
-/* Botão do YouTube */
-.youtube-btn {
-    background-color: #FF0000; /* Vermelho oficial do YouTube */
-    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 30px;
     text-decoration: none;
-    padding: 12px 28px;
-    border-radius: 980px;
-    font-size: 15px;
-    font-weight: 500;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-weight: bold;
+    transition: background 0.2s;
 }
 
-.youtube-btn:hover {
-    background-color: #cc0000; /* Um tom um pouco mais escuro ao passar o mouse */
-    transform: scale(1.03);
+.btn-youtube:hover {
+    background-color: #cc0000;
+}
+
+/* --- RESPONSIVIDADE PARA CELULAR (Mobile) --- */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: flex; /* Mostra os dois tracinhos no mobile */
+    }
+
+    /* Transforma os links em um menu overlay de tela cheia */
+    .nav-links {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #0b0b0b;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 25px;
+        font-size: 1.5rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    /* Estado ativo do menu (aberto) */
+    .nav-links.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Animação do botão para virar um "X" ao abrir */
+    .menu-toggle.active span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+    .menu-toggle.active span:nth-child(2) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
 }
